@@ -1,0 +1,11 @@
+{
+    "editor.formatOnSave": true,
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "prettier.bracketSpacing": true,
+    "pretter.singleQuote": true,
+    "prettier.arrowParens": "always",
+    "prettier.printWidth": 80,
+    "prettier.enable": true
+}

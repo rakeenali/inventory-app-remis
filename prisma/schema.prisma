@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  created_at   DateTime        @default(now())
+  deleted      Boolean         @default(false)
+  id           Int             @id @default(autoincrement())
+  name         String
+  sku          String          @unique
+  barcode      String          @unique
+  quantity     Int
+  price        Float
+  final_price  Float
+  ProductChage ProductChange[]
+}
+
+model ProductChange {
+  created_at        DateTime @default(now())
+  deleted           Boolean  @default(false)
+  id                Int      @id @default(autoincrement())
+  product_id        Int
+  previous_quantity Int
+  updated_quantity  Int
+  product           Product  @relation(fields: [product_id], references: [id])
+}
