@@ -44,6 +44,14 @@ body {
 
 /* UTILS END */
 
+/* invoice-new start */
+.invoice-new h5 {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* invoice-new end */
+
 /* NAVBAR START */
 .navbar {
   display: flex;

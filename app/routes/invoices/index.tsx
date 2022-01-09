@@ -17,8 +17,6 @@ type LoaderProps = {
 export default function InvoiceIndex() {
   const { invoices } = useLoaderData<LoaderProps>();
 
-  console.log(invoices);
-
   const renderInvoices = () => {
     return invoices.map((invoice) => {
       return (

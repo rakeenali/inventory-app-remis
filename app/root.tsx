@@ -1,4 +1,4 @@
-import { Outlet, LiveReload, Link, Links, Meta } from "remix";
+import { Outlet, LiveReload, Link, Links, Meta, Scripts } from "remix";
 
 import normalizeStylesUrl from "~/styles/normalize.css";
 import skeletonStyleUrl from "~/styles/skeleton.css";
@@ -82,6 +82,7 @@ export default function App() {
     <Document>
       <Layout>
         <Outlet />
+        <Scripts />
       </Layout>
     </Document>
   );
