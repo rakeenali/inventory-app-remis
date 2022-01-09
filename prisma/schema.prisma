@@ -11,16 +11,17 @@ datasource db {
 }
 
 model Product {
-  created_at   DateTime        @default(now())
-  deleted      Boolean         @default(false)
-  id           Int             @id @default(autoincrement())
-  name         String
-  sku          String          @unique
-  barcode      String          @unique
-  quantity     Int
-  price        Float
-  final_price  Float
-  ProductChage ProductChange[]
+  created_at      DateTime          @default(now())
+  deleted         Boolean           @default(false)
+  id              Int               @id @default(autoincrement())
+  name            String
+  sku             String            @unique
+  barcode         String            @unique
+  quantity        Int
+  price           Float
+  final_price     Float
+  ProductChage    ProductChange[]
+  InvoiceProducts InvoiceProducts[]
 }
 
 model ProductChange {
@@ -31,4 +32,29 @@ model ProductChange {
   previous_quantity Int
   updated_quantity  Int
   product           Product  @relation(fields: [product_id], references: [id])
+}
+
+model Invoices {
+  created_at       DateTime          @default(now())
+  deleted          Boolean           @default(false)
+  id               Int               @id @default(autoincrement())
+  name             String
+  amount           Float
+  discount         Int
+  final_amount     Float
+  product_quantity Int
+  InvoiceProducts  InvoiceProducts[]
+}
+
+model InvoiceProducts {
+  created_at   DateTime @default(now())
+  deleted      Boolean  @default(false)
+  id           Int      @id @default(autoincrement())
+  invoice_id   Int
+  product_id   Int
+  actual_price Float
+  quantity     Int
+  final_price  Float
+  invoice      Invoices @relation(fields: [invoice_id], references: [id])
+  product      Product  @relation(fields: [product_id], references: [id])
 }

@@ -14,3 +14,7 @@ export const integerCheck = (value: string): boolean => {
 export const formatDate = (date: Date) => {
   return format(new Date(date), "hh:mm aaa / dd MMM y");
 };
+
+export const calculateDiscount = (amount: number, discount: number) => {
+  return Math.round(amount - (amount * discount) / 100);
+};

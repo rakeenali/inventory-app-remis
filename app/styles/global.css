@@ -14,8 +14,32 @@ body {
   margin-bottom: 10px;
 }
 
+.mt-20 {
+  margin-top: 20px;
+}
+
 .remove-margins {
   margin: 0px;
+}
+
+.invoice-card {
+  background-color: #000000c2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  padding-top: 18px;
+  border-radius: 20px;
+  color: #eee;
+}
+
+.invoice-card h5 {
+  font-weight: bold;
+}
+
+.invoice-card h5 span {
+  font-size: 14px;
 }
 
 /* UTILS END */

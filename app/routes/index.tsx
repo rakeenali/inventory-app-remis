@@ -13,7 +13,7 @@ export default function Index() {
         </div>
         <div className="eight columns">&nbsp;</div>
         <div className="two columns">
-          <Link className="button button-primary" to="/">
+          <Link className="button button-primary" to="/invoices">
             Invoices
           </Link>
         </div>

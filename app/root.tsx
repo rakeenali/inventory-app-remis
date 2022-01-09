@@ -56,7 +56,7 @@ function Layout({ children }: Props): JSX.Element {
             <Link to="/inventory">Inventory</Link>
           </li>
           <li>
-            <Link to="/posts">Invoices</Link>
+            <Link to="/invoices">Invoices</Link>
           </li>
         </ul>
       </nav>

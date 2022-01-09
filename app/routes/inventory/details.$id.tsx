@@ -61,6 +61,10 @@ export default function InventoryDetails() {
             {product.barcode}
           </p>
           <p>
+            <strong>Quantity: </strong>
+            {product.quantity}
+          </p>
+          <p>
             <strong>Created At: </strong>
             {formatDate(product.created_at)}
           </p>
