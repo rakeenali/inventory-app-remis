@@ -4,12 +4,15 @@ import {
   ActionFunction,
   Form,
   LoaderFunction,
+  redirect,
   useLoaderData,
   useSearchParams,
 } from "remix";
 import { HeaderComponent } from "~/components/Header.component";
 import { InputComponent } from "~/components/Input.component";
+import { createInvoice } from "~/repository/invoices.repository";
 import { searchProducts } from "~/repository/products.repository";
+import { ICartInvoiceProduct } from "~/types/invoice";
 import { calculateDiscount } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -24,8 +27,35 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  console.log("action");
-  return {};
+  const body = await request.formData();
+
+  const invoiceName = body.get("invoiceName")?.toString() || "";
+  const invoiceAmount = parseInt(body.get("invoiceAmount")?.toString() || "");
+  const discountValue = parseInt(body.get("discountValue")?.toString() || "");
+  const finalAmount = parseInt(body.get("finalAmount")?.toString() || "");
+  const cart = JSON.parse(body.get("cart")?.toString() || "") as CartState;
+  const quantity = JSON.parse(
+    body.get("quantity")?.toString() || ""
+  ) as QuantityState;
+
+  const invoiceProduct: ICartInvoiceProduct[] = [];
+  for (let idx in cart) {
+    invoiceProduct.push({
+      id: parseInt(idx),
+      quantity: quantity[idx],
+      final_price: cart[idx].final_price,
+    });
+  }
+
+  await createInvoice({
+    products: invoiceProduct,
+    invoiceName: invoiceName,
+    invoiceAmount: invoiceAmount,
+    discountValue: discountValue,
+    finalAmount: finalAmount,
+  });
+
+  return redirect("/invoices");
 };
 
 type LoaderProps = {
@@ -48,7 +78,7 @@ export default function InvoiceNew() {
   const [quantity, setQuantity] = useState<QuantityState>({});
   const [cart, setCart] = useState<CartState>({});
 
-  const [canCreateInvoice, setCanCreateInvoice] = useState(true);
+  const [canCreateInvoice, setCanCreateInvoice] = useState(false);
   const [discountValue, setDiscountValue] = useState<number>(0);
 
   const { products } = useLoaderData<LoaderProps>();
@@ -172,7 +202,7 @@ export default function InvoiceNew() {
 
     return (
       <>
-        <div className="row">
+        <div>
           <div className="six columns">&nbsp;</div>
           <div className="three columns u-full-width">
             <h4>
@@ -224,13 +254,13 @@ export default function InvoiceNew() {
                 label="Invoice Name"
                 name="invoiceName"
               />
-              <InputComponent
-                required={true}
-                label="Invoice Amount"
-                name="invoiceAmount"
+              <input
+                className="u-full-width"
                 type="number"
-                disabled
-                defaultValue={totalAmount.toString()}
+                placeholder="Invoice Amount"
+                name="invoiceAmount"
+                onChange={() => {}}
+                value={totalAmount.toString()}
               />
               <div className="twelve columns mb-10">
                 <label>Invoice Discount</label>
@@ -241,6 +271,7 @@ export default function InvoiceNew() {
                   min={0}
                   max={100}
                   required
+                  name="discountValue"
                   value={discountValue}
                   onChange={(e) => {
                     setDiscountValue(parseInt(e.target.value));
@@ -253,11 +284,20 @@ export default function InvoiceNew() {
                   className="u-full-width"
                   type="number"
                   placeholder="Final Amount"
+                  name="finalAmount"
                   onChange={() => {}}
                   value={calculateDiscount(
                     totalAmount,
                     discountValue
                   ).toString()}
+                />
+              </div>
+              <div className="twelve columns mb-10">
+                <input type="hidden" name="cart" value={JSON.stringify(cart)} />
+                <input
+                  type="hidden"
+                  name="quantity"
+                  value={JSON.stringify(quantity)}
                 />
               </div>
               <button type="submit" className="button-primary">

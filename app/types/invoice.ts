@@ -26,3 +26,24 @@ export interface IInvoiceProducts {
   // Relations
   product?: Product;
 }
+
+export interface ICartInvoiceProduct {
+  id: number;
+  quantity: number;
+  final_price: number;
+}
+
+export interface ICreateInvoice {
+  products: ICartInvoiceProduct[];
+  invoiceName: string;
+  invoiceAmount: number;
+  discountValue: number;
+  finalAmount: number;
+}
+
+export interface ICreateInvoiceProduct {
+  invoiceId: number;
+  productId: number;
+  actualPrice: number;
+  quantity: number;
+}

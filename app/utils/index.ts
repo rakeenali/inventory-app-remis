@@ -12,6 +12,7 @@ export const integerCheck = (value: string): boolean => {
 };
 
 export const formatDate = (date: Date) => {
+  console.log("date", date);
   return format(new Date(date), "hh:mm aaa / dd MMM y");
 };
 
