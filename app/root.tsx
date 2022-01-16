@@ -33,7 +33,7 @@ function Document({ children = null, title = "" }: Props): JSX.Element {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <title>{title ? title : "Remix Blog"}</title>
+        <title>{title ? title : "Inventory"}</title>
       </head>
       <body>
         {children}
