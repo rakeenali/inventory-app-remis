@@ -47,3 +47,19 @@ export interface ICreateInvoiceProduct {
   actualPrice: number;
   quantity: number;
 }
+
+export interface IInvoiceProductEjs {
+  name: string;
+  actualPrice: string;
+  quantity: string;
+  finalPrice: string;
+}
+export interface IInvoiceEjs {
+  invoiceId: string;
+  invoiceDate: string;
+  invoiceName: string;
+  invoiceSubtotal: string;
+  invoiceDiscount: string;
+  invoiceAmount: string;
+  product: IInvoiceProductEjs[];
+}

@@ -1,16 +1,23 @@
-import { LoaderFunction, useLoaderData } from "remix";
+import {
+  ActionFunction,
+  LoaderFunction,
+  useActionData,
+  useLoaderData,
+} from "remix";
+import PHE from "print-html-element";
+
 import { HeaderComponent } from "~/components/Header.component";
-import { getInvoice } from "~/repository/invoices.repository";
+import { getInvoice, printInvoice } from "~/repository/invoices.repository";
 import { IInvoice } from "~/types/invoice";
 import { formatDate, integerCheck } from "~/utils";
+import { useEffect } from "react";
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { id } = params;
 
   if (id && integerCheck(id)) {
     const invoice = await getInvoice(Number(id));
     if (invoice) {
-      console.log(invoice);
       return {
         invoice,
       };
@@ -20,12 +27,36 @@ export const loader: LoaderFunction = async ({ params }) => {
   throw new Response("Not Found", { status: 404 });
 };
 
+export const action: ActionFunction = async ({ request, params }) => {
+  const form = await request.formData();
+  if (form.get("_print") == "print") {
+    const { id } = params;
+    if (id && integerCheck(id)) {
+      const invoice = await getInvoice(Number(id));
+      if (invoice) {
+        const template = await printInvoice(invoice);
+        return { template: template };
+      }
+    }
+  } else {
+    return { template: "" };
+  }
+};
+
 type LoaderProps = {
   invoice: IInvoice;
 };
 
 export default function InvoiceDetails() {
   const { invoice } = useLoaderData<LoaderProps>();
+  const data = useActionData();
+
+  useEffect(() => {
+    if (data?.template) {
+      //@ts-ignore
+      PHE.printHtml(data?.template);
+    }
+  }, []);
 
   const renderCard = (label: string, value: number, suffix: string) => {
     return (
@@ -88,9 +119,10 @@ export default function InvoiceDetails() {
           </h4>
         </div>
         <div className="three columns">&nbsp;</div>
-        <div className="three columns">
+        <form className="three columns" method="post">
+          <input type="hidden" name="_print" value="print" />
           <button className="button-primary u-full-width">Print</button>
-        </div>
+        </form>
       </div>
       <table className="u-full-width">
         <thead>

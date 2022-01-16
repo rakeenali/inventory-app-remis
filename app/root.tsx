@@ -61,6 +61,7 @@ function Layout({ children }: Props): JSX.Element {
         </ul>
       </nav>
       <div className="container">{children}</div>
+      <div id="toPrint"></div>
     </>
   );
 }

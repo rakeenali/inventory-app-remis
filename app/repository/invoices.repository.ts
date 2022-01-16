@@ -1,5 +1,15 @@
 import { InvoiceProducts, Invoices } from "@prisma/client";
-import { ICreateInvoice, ICreateInvoiceProduct } from "~/types/invoice";
+import * as ejs from "ejs";
+import PHE from "print-html-element";
+
+import {
+  ICreateInvoice,
+  ICreateInvoiceProduct,
+  IInvoice,
+  IInvoiceEjs,
+} from "~/types/invoice";
+import { formatDate } from "~/utils";
+import { invoiceEjs } from "~/utils/invoice";
 import { db } from "./db.server";
 import { updateQuantity } from "./products.repository";
 
@@ -83,7 +93,6 @@ export const createInvoice = async (
   args: ICreateInvoice
 ): Promise<Invoices> => {
   try {
-    console.log("args", args);
     // Create invoice.
     const invoice = await db.invoices.create({
       data: {
@@ -142,4 +151,26 @@ export const createInvoicesProducts = async (
     console.log("Repo -> createInvoicesProducts", error);
     throw error;
   }
+};
+
+export const printInvoice = async (invoice: IInvoice) => {
+  const data: IInvoiceEjs = {
+    invoiceAmount: invoice.final_amount.toFixed(2).toString() || "",
+    invoiceSubtotal: invoice.amount.toFixed(2).toString() || "",
+    invoiceDate: formatDate(invoice.created_at || new Date()),
+    invoiceDiscount: invoice.discount.toFixed(2).toString() || "",
+    invoiceId: invoice.id?.toString() || "",
+    invoiceName: invoice.name,
+    product: invoice?.InvoiceProducts?.map((p) => {
+      return {
+        actualPrice: p.actual_price.toFixed(2).toString() || "",
+        finalPrice: p.final_price.toFixed(2).toString() || "",
+        name: p?.product?.name,
+        quantity: p.quantity.toString() || "",
+      };
+    }) as any,
+  };
+
+  const renderedInvoice = ejs.render(invoiceEjs, data);
+  return renderedInvoice;
 };

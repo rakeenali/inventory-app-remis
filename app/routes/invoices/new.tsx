@@ -1,13 +1,15 @@
 import { Product } from "@prisma/client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ActionFunction,
   Form,
   LoaderFunction,
   redirect,
+  useActionData,
   useLoaderData,
   useSearchParams,
 } from "remix";
+
 import { HeaderComponent } from "~/components/Header.component";
 import { InputComponent } from "~/components/Input.component";
 import { createInvoice } from "~/repository/invoices.repository";
@@ -47,7 +49,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  await createInvoice({
+  const invoice = await createInvoice({
     products: invoiceProduct,
     invoiceName: invoiceName,
     invoiceAmount: invoiceAmount,
@@ -55,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
     finalAmount: finalAmount,
   });
 
-  return redirect("/invoices");
+  return redirect(`/invoices/details/${invoice.id}`);
 };
 
 type LoaderProps = {
@@ -82,6 +84,7 @@ export default function InvoiceNew() {
   const [discountValue, setDiscountValue] = useState<number>(0);
 
   const { products } = useLoaderData<LoaderProps>();
+  const data = useActionData();
 
   const totalAmount = useMemo(() => {
     return Object.entries(cart).reduce((acc, [id, c]) => {
